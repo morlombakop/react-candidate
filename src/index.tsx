@@ -1,7 +1,14 @@
 import * as React from 'react'
 import { render } from 'react-dom'
+import { IntlProvider } from 'react-intl'
 import './styles.scss'
 
-import App from './components/App'
+import * as messages from './i18n/en-gb.json'
+import App from './components/app'
 
-render(<App />, document.getElementById('root'))
+render(
+  <IntlProvider locale="en-gb" messages={messages}>
+    <App />
+  </IntlProvider>,
+  document.getElementById('root')
+)

@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { render } from 'react-testing-library'
 
-import App from '../App'
+import App from '..'
 
 /**
  * Just a simple integration tests

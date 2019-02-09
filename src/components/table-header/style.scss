@@ -1,0 +1,7 @@
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  &:hover {
+    background-color: $color-primary-dark;
+  }
+}

@@ -1,0 +1,24 @@
+table {
+  width: 100%;
+  border-collapse: collapse;
+
+  td {
+    @include table-cell();
+  }
+
+  tr {
+    &:nth-child(even) {
+      background-color: $light-grey-color;
+    }
+
+    &:hover {
+      background-color: $grey-color;
+    }
+  }
+
+  th {
+    background-color: $color-primary;
+    color: $color-white;
+    @include table-cell();
+  }
+}
