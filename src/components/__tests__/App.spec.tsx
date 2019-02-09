@@ -9,6 +9,5 @@ import App from '../App'
 
 test('App Component renders with container div', () => {
   const wrap = render(<App />)
-
   expect(wrap.getByTestId('app-container')).toBeTruthy()
 })

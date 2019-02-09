@@ -1,6 +1,6 @@
 # React Typescript Interview Candidate Management App
 
-This repository showcases an app that help sort a filter job seekers candidate from a table.
+This repository showcases an app that sorts and filters job seekers candidate from a table.
 
 ## Built in settings
 
