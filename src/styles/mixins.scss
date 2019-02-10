@@ -1,0 +1,5 @@
+@mixin table-cell {
+  border: 1px solid $grey-color;
+  text-align: left;
+  padding: $base-dimension;
+}

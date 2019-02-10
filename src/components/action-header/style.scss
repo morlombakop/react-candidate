@@ -1,0 +1,11 @@
+.table-header {
+  padding: 0 !important;
+  .table-header-action {
+    display: flex;
+    justify-content: space-between;
+    padding: $base-dimension;
+    &:hover {
+      background-color: $color-primary-dark;
+    }
+  }
+}

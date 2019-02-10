@@ -48,6 +48,7 @@
     "Typescript"
   ],
   "dependencies": {
+    "lodash": "^4.17.11",
     "react": "^16.8.1",
     "react-dom": "^16.8.1",
     "react-icons": "^3.3.0",
@@ -55,6 +56,7 @@
   },
   "devDependencies": {
     "@types/jest": "^24.0.0",
+    "@types/lodash": "^4.14.120",
     "@types/react": "^16.8.2",
     "@types/react-dom": "^16.8.0",
     "@types/react-icons": "^2.2.6",
