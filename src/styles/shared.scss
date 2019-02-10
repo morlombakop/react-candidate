@@ -8,7 +8,66 @@ body {
   font-family: 'Helvetica', 'Arial', sans-serif;
 }
 
-.container {
+input[type='checkbox'] {
+  width: #{$base-dimension * 2.5};
+  height: #{$base-dimension * 2.5};
+  cursor: pointer;
+}
+
+.div-flex {
   display: flex;
-  justify-content: center;
+}
+
+.space-between {
+  justify-content: space-between;
+}
+
+.align-end {
+  align-items: flex-end;
+}
+
+.align-center {
+  align-items: center;
+}
+
+.div-reverse {
+  display: flex;
+  flex-direction: row-reverse;
+}
+
+.m-b-half {
+  margin-bottom: #{$base-dimension * 0.5};
+}
+
+.m-r-half {
+  margin-right: #{$base-dimension * 0.5};
+}
+
+.p-l-1 {
+  padding-left: $base-dimension;
+}
+
+.icon-btn {
+  @include button();
+  color: $color-white;
+  padding: 0;
+  font-size: 1.3em;
+  color: $grey-color;
+  &:hover {
+    background-color: transparent;
+    color: $color-white;
+  }
+}
+
+.btn-primary {
+  @include btn-primary();
+}
+
+.btn-primary-bordered {
+  @include btn-primary();
+  border: 1px solid $color-white;
+}
+
+.text-primary {
+  color: $color-primary-dark;
 }

@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { FaArrowUp, FaArrowDown } from 'react-icons/fa'
+import { FaSortAmountUp, FaSortAmountDown } from 'react-icons/fa'
 
 import { ASCENDING, DESCENDING, ISort } from '../../domain/sort'
 
@@ -22,7 +22,7 @@ const ActionHeader: React.FC<ActionHeaderProps> = props => {
     if (columnName !== activeColumn) {
       return null
     }
-    return direction === ASCENDING ? <FaArrowUp /> : <FaArrowDown />
+    return direction === ASCENDING ? <FaSortAmountUp /> : <FaSortAmountDown />
   }
 
   return (

@@ -3,3 +3,37 @@
   text-align: left;
   padding: $base-dimension;
 }
+
+// flex box will be better to center and element.
+// Doing this so i can reuse to center the modal as recommended by the react-modal team.
+@mixin centered-element {
+  top: '50%';
+  left: '50%';
+  right: 'auto';
+  bottom: 'auto';
+  margin-right: '-50%';
+  transform: 'translate(-50%, -50%)';
+}
+
+@mixin button {
+  background-color: transparent;
+  border: none;
+  padding: $base-dimension #{$base-dimension * 2};
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 1em;
+  &:hover {
+    background-color: $light-grey-color;
+  }
+}
+
+@mixin btn-primary {
+  @include button();
+  background-color: $color-primary;
+  color: $color-white;
+  &:hover {
+    background-color: $color-primary-dark;
+  }
+}

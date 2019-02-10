@@ -14,11 +14,13 @@ import {
   DESCENDING,
   IBaseSort,
 } from '../domain/sort'
+import { IFilter } from '../domain/filter'
 
 type AppContainerState = {
   candidates: ICandidate[]
   isLoading: boolean
   sort: IBaseSort
+  isModalFilterOpen: boolean
 }
 
 class AppContainer extends React.Component<{}, AppContainerState> {
@@ -29,7 +31,22 @@ class AppContainer extends React.Component<{}, AppContainerState> {
       direction: ASCENDING, // default sort direction
       activeColumn: APPLICATION_DATE, // default sort column
     },
+    isModalFilterOpen: false,
   }
+
+  getFilterProps = (): IFilter => ({
+    isModalOpen: this.state.isModalFilterOpen,
+    onCancel: this.handleOnCancelFilter,
+  })
+
+  handleShowFilter = () =>
+    this.setState(state => ({ ...state, isModalFilterOpen: true }))
+
+  handleOnCancelFilter = () =>
+    this.setState(state => ({
+      ...state,
+      isModalFilterOpen: false,
+    }))
 
   // handle on sortable column header click
   handleOnSort = (columnName: string, sortDirection: string) => {
@@ -89,6 +106,8 @@ class AppContainer extends React.Component<{}, AppContainerState> {
         // We could use the context API to avoid passing props like sort across multiples components.
         // Need some refactoring here.
         sort={{ ...this.state.sort, onSort: this.handleOnSort }}
+        showFilters={this.handleShowFilter}
+        filter={this.getFilterProps()}
       />
     )
   }

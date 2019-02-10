@@ -1,10 +1,15 @@
 {
   "reactCandidate.app.title": "Applicants List",
+  "reactCandidate.app.filters": "Filters",
   "reactCandidate.actionHeader.text.name": "Name",
   "reactCandidate.actionHeader.text.email": "Email",
   "reactCandidate.actionHeader.text.age": "Age",
   "reactCandidate.actionHeader.text.yearOfExperience": "Year of Experience",
   "reactCandidate.actionHeader.text.positionApplied": "Position Applied",
   "reactCandidate.actionHeader.text.dateApplied": "Applied",
-  "reactCandidate.actionHeader.text.status": "Status"
+  "reactCandidate.actionHeader.text.status": "Status",
+  "reactCandidate.filter.title": "Filters",
+  "reactCandidate.filter.apply": "Apply",
+  "reactCandidate.filter.reset": "Reset",
+  "reactCandidate.filter.cancel": "Cancel"
 }
