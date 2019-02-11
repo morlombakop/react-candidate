@@ -3,30 +3,25 @@ import { FormattedMessage } from 'react-intl'
 import Modal from 'react-modal'
 import { FaTimes } from 'react-icons/fa'
 
-import { IFilter } from '../../domain/filter'
-
-import CheckBox from './checkbox'
+import FilterCard from './filter-card'
+import { IFilter, IFilterQuery } from '../../domain/filter'
 
 // This is mandatory according to react-modal team.
 Modal.setAppElement('#root')
 
-// please remove links below
-// https://stackoverflow.com/questions/44590352/filter-by-multiple-keys-and-values-javascript
-// https://stackoverflow.com/questions/31831651/javascript-filter-array-multiple-conditions
-
 type FiltersProps = IFilter
-type CheckBoxState = {
-  isChecked: boolean
+type FiltersState = {
+  internalFilters: IFilterQuery[]
 }
 
 // Extending React.PureComponent here to prevent this component
 // from re-rendering each time the app-container state changes
-class Filter extends React.PureComponent<FiltersProps, CheckBoxState> {
-  readonly state: CheckBoxState = {
-    isChecked: false,
+class Filter extends React.PureComponent<FiltersProps, FiltersState> {
+  readonly state: FiltersState = {
+    internalFilters: this.props.filters,
   }
 
-  // all the style would be better applied with CSS or done here with styled-components.
+  // all styles would be better applied with CSS or done here with styled-components.
   getStyles = () => ({
     content: {
       top: '50%',
@@ -38,14 +33,67 @@ class Filter extends React.PureComponent<FiltersProps, CheckBoxState> {
       borderRadius: 0,
       backgroundColor: '#0a8bd1', // color-primary
       color: '#fff',
-      paddingTop: 0,
+      paddingTop: '10px',
+      minWidth: '500px',
     },
   })
 
-  handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.info('Helllo wwwwwwwww')
-    const isChecked = event.target.checked
-    this.setState(state => ({ ...state, isChecked }))
+  getCheckboxStatus = (name: string, column: string): boolean =>
+    this.state.internalFilters.some(
+      filter => filter.column === column && filter.selectedValues.includes(name)
+    )
+
+  handleOnFilterCardChange = (
+    column: string,
+    name: string,
+    isChecked: boolean
+  ) =>
+    this.setState(state => ({
+      ...state,
+      internalFilters: state.internalFilters.reduce(
+        (queries: IFilterQuery[], query) =>
+          query.column === column
+            ? [
+                // using spreed operator as it is faster than concat
+                ...queries,
+                // modify query values for this column
+                {
+                  ...query,
+                  selectedValues: isChecked
+                    ? // add filter value
+                      [...query.selectedValues, name]
+                    : // remove filter value
+                      query.selectedValues.filter(value => value !== name),
+                },
+              ]
+            : // Keep query
+              [...queries, query],
+        []
+      ),
+    }))
+
+  handleResetFilters = () =>
+    this.setState(
+      state => ({
+        ...state,
+        internalFilters: state.internalFilters.reduce(
+          (queries: IFilterQuery[], query) => [
+            ...queries,
+            // empty all selected values
+            { ...query, selectedValues: [] },
+          ],
+          []
+        ),
+      }),
+      () => {
+        this.handleOnApplyFilters()
+        this.props.onCancel()
+      }
+    )
+
+  handleOnApplyFilters = () => {
+    this.props.applyFilter(this.state.internalFilters)
+    this.props.onCancel()
   }
 
   renderHeader = (): JSX.Element => (
@@ -64,19 +112,31 @@ class Filter extends React.PureComponent<FiltersProps, CheckBoxState> {
 
   renderFooter = (): JSX.Element => (
     <div className="div-reverse">
-      <button className="btn-primary-bordered" type="button">
+      <button
+        onClick={this.handleOnApplyFilters}
+        className="btn-primary-bordered"
+        type="button"
+      >
         <FormattedMessage
           id="reactCandidate.filter.apply"
           defaultMessage="Apply"
         />
       </button>
-      <button className="btn-primary-bordered m-r-half" type="button">
+      <button
+        onClick={this.handleResetFilters}
+        className="btn-primary-bordered m-r-half"
+        type="button"
+      >
         <FormattedMessage
           id="reactCandidate.filter.reset"
           defaultMessage="Reset"
         />
       </button>
-      <button className="btn-primary-bordered m-r-half" type="button">
+      <button
+        className="btn-primary-bordered m-r-half"
+        onClick={this.props.onCancel}
+        type="button"
+      >
         <FormattedMessage
           id="reactCandidate.filter.cancel"
           defaultMessage="Cancel"
@@ -85,27 +145,27 @@ class Filter extends React.PureComponent<FiltersProps, CheckBoxState> {
     </div>
   )
 
+  renderFilters = (): JSX.Element => (
+    <React.Fragment>
+      {this.props.filterConfig.map(config => (
+        <FilterCard
+          key={config.column}
+          onChange={this.handleOnFilterCardChange}
+          getCheckboxStatus={this.getCheckboxStatus}
+          inputs={config.inputs}
+          titleLabel={config.titleLabel}
+          column={config.column}
+        />
+      ))}
+    </React.Fragment>
+  )
+
   render() {
     return (
       <div data-testid="filter" className="filter">
-        <Modal
-          isOpen={this.props.isModalOpen}
-          style={this.getStyles()}
-          contentLabel="Example Modal"
-        >
+        <Modal isOpen={this.props.isModalOpen} style={this.getStyles()}>
           {this.renderHeader()}
-          <h2>Hello</h2>
-          <button onClick={this.props.onCancel}>close</button>
-          <div>I am a modal</div>
-          <h1>Hello Modal 1</h1>
-          <h1>Custom Checkboxes</h1>
-
-          <CheckBox />
-          <CheckBox />
-          <CheckBox />
-
-          <h1>Hello Modal 3</h1>
-          <h1>Hello Modal 4</h1>
+          {this.renderFilters()}
           {this.renderFooter()}
         </Modal>
       </div>

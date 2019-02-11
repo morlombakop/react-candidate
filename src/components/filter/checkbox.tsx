@@ -1,37 +1,40 @@
 import * as React from 'react'
 import { FormattedMessage } from 'react-intl'
 
-type CheckBoxState = {
+type CheckBoxProps = {
+  name: string
   isChecked: boolean
+  onChange: (name: string, isChecked: boolean) => void
+  displayText?: string
 }
 
 // Extending React.PureComponent here to prevent this component
 // from re-rendering each time the app-container state changes
-class CheckBox extends React.PureComponent<{}, CheckBoxState> {
-  readonly state: CheckBoxState = {
-    isChecked: false,
-  }
-
+class CheckBox extends React.PureComponent<CheckBoxProps> {
   handleOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { checked, name } = event.target
-    console.info('Helllo XXXXXX', name)
-    this.setState(state => ({ ...state, isChecked: checked }))
+    this.props.onChange(name, checked)
   }
 
   render() {
     return (
-      <label htmlFor="checkbox" className="div-flex align-center">
-        <input
-          type="checkbox"
-          name="myCheckbox"
-          checked={this.state.isChecked}
-          onChange={this.handleOnChange}
-        />
-        <FormattedMessage
-          id="reactCandidate.filter.title"
-          defaultMessage="Filters"
-        />
-      </label>
+      <div className="div-flex">
+        <label htmlFor="checkbox">
+          <input
+            type="checkbox"
+            name={this.props.name}
+            checked={this.props.isChecked}
+            onChange={this.handleOnChange}
+          />
+          <span className="m-b-half">
+            {this.props.displayText ? (
+              <FormattedMessage id={this.props.displayText} />
+            ) : (
+              this.props.name
+            )}
+          </span>
+        </label>
+      </div>
     )
   }
 }

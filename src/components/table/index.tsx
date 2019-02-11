@@ -7,8 +7,9 @@ import {
   EXPERIENCE,
   POSITION_APPLIED,
   APPLICATION_DATE,
-  ISort,
-} from '../../domain/sort'
+  APPLICANT_NAME,
+} from '../../domain/constants'
+import { ISort } from '../../domain/sort'
 
 type TableProps = {
   candidates: ICandidate[]
@@ -39,9 +40,12 @@ const Table: React.FC<TableProps> = props => {
     <table className="table" data-testid="candidate-list">
       <thead>
         <tr>
-          <th>
-            <FormattedMessage id={messages.name} defaultMessage="Name" />
-          </th>
+          <th>#</th>
+          <ActionHeader
+            columnName={APPLICANT_NAME}
+            sort={sort}
+            text={<FormattedMessage id={messages.name} defaultMessage="Name" />}
+          />
           <th>
             <FormattedMessage id={messages.email} defaultMessage="Email" />
           </th>
@@ -84,8 +88,9 @@ const Table: React.FC<TableProps> = props => {
         </tr>
       </thead>
       <tbody>
-        {candidates.map(candidate => (
+        {candidates.map((candidate, index) => (
           <tr key={candidate.id}>
+            <td>{index + 1}</td>
             <td>{candidate.name}</td>
             <td>{candidate.email}</td>
             <td>{getAge(candidate.birth_date)}</td>

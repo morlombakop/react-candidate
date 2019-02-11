@@ -8,12 +8,6 @@ body {
   font-family: 'Helvetica', 'Arial', sans-serif;
 }
 
-input[type='checkbox'] {
-  width: #{$base-dimension * 2.5};
-  height: #{$base-dimension * 2.5};
-  cursor: pointer;
-}
-
 .div-flex {
   display: flex;
 }
@@ -68,6 +62,27 @@ input[type='checkbox'] {
   border: 1px solid $color-white;
 }
 
+.btn {
+  @include button();
+  border: 1px solid $grey-color;
+}
+
 .text-primary {
   color: $color-primary-dark;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+  margin: 0;
+  padding: $base-dimension 0;
+}
+
+.center {
+  margin-top: 40vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

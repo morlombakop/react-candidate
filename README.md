@@ -55,23 +55,3 @@ The default output directory is `/dist`. You can change the destination wherever
 
 You have to create `__tests__` directory at the same location of files which you want to test.
 Test file's name should be `SOURCE.test.ts/tsx/js` or `SOURCE.spec.ts/tsx/js`.
-
-## Miscellaneous
-
-This Project uses pre-commit hook for `prettier` and testing application.  
-If you don't like it, please remove the `husky` package from your repository and erase following scripts.
-
-    yarn remove husky
-
-then
-
-```
-// package.json
-// ...
-"husky": {
-  "hooks": {
-    "pre-commit": "npm run prettify && npm run test"
-  }
-},
-// ...
-```

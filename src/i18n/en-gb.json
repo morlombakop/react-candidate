@@ -11,5 +11,10 @@
   "reactCandidate.filter.title": "Filters",
   "reactCandidate.filter.apply": "Apply",
   "reactCandidate.filter.reset": "Reset",
-  "reactCandidate.filter.cancel": "Cancel"
+  "reactCandidate.filter.cancel": "Close",
+  "reactCandidate.filter.checkbox.approved": "Approved",
+  "reactCandidate.filter.checkbox.rejected": "Rejected",
+  "reactCandidate.filter.checkbox.waiting": "Waiting",
+  "reactCandidate.error.title": "Error fetching data",
+  "reactCandidate.error.tryAgain": "Try Again"
 }

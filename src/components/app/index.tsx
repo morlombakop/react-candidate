@@ -38,7 +38,13 @@ const App: React.FC<AppProps> = props => {
         </button>
       </div>
       <Table candidates={candidates} sort={sort} />
-      <Filter isModalOpen={filter.isModalOpen} onCancel={filter.onCancel} />
+      <Filter
+        onCancel={filter.onCancel}
+        isModalOpen={filter.isModalOpen}
+        filterConfig={filter.filterConfig}
+        filters={filter.filters}
+        applyFilter={filter.applyFilter}
+      />
     </div>
   )
 }

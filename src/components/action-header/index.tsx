@@ -1,7 +1,8 @@
 import * as React from 'react'
 import { FaSortAmountUp, FaSortAmountDown } from 'react-icons/fa'
 
-import { ASCENDING, DESCENDING, ISort } from '../../domain/sort'
+import { ISort } from '../../domain/sort'
+import { ASCENDING, DESCENDING } from '../../domain/constants'
 
 type ActionHeaderProps = {
   text: JSX.Element

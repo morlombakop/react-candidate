@@ -1,0 +1,15 @@
+.filter-item {
+  -webkit-column-count: 2; /* Chrome, Safari, Opera */
+  -moz-column-count: 2; /* Firefox */
+  column-count: 2;
+}
+
+.card-container {
+  padding-bottom: #{$base-dimension * 2};
+}
+
+input[type='checkbox'] {
+  width: #{$base-dimension * 2.5};
+  height: #{$base-dimension * 2};
+  cursor: pointer;
+}
