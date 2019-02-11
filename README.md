@@ -52,6 +52,3 @@ The default output directory is `/dist`. You can change the destination wherever
 
     yarn test       # run test once
     yarn test:watch # watch mode
-
-You have to create `__tests__` directory at the same location of files which you want to test.
-Test file's name should be `SOURCE.test.ts/tsx/js` or `SOURCE.spec.ts/tsx/js`.
