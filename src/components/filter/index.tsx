@@ -40,7 +40,10 @@ class Filter extends React.PureComponent<FiltersProps, FiltersState> {
 
   getCheckboxStatus = (name: string, column: string): boolean =>
     this.state.internalFilters.some(
-      filter => filter.column === column && filter.selectedValues.includes(name)
+      filter =>
+        filter.column === column &&
+        Array.isArray(filter.selectedValues) &&
+        filter.selectedValues.includes(name)
     )
 
   handleOnFilterCardChange = (

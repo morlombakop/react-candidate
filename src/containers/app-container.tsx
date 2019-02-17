@@ -1,5 +1,8 @@
 import * as React from 'react'
 import { orderBy, get } from 'lodash'
+import { withRouter } from 'react-router-dom'
+import { RouteComponentProps } from 'react-router'
+import qs from 'qs'
 
 import App from '../components/app'
 import Loader from '../components/loader'
@@ -7,8 +10,10 @@ import Error from '../components/error'
 import ICandidate from '../domain/candidate'
 import { IBaseSort } from '../domain/sort'
 import {
+  columns,
   APPLICANT_NAME,
   APPLICATION_DATE,
+  APPLICATION_STATUS,
   EXPERIENCE,
   ASCENDING,
   DESCENDING,
@@ -18,6 +23,8 @@ import { IFilter, IFilterInput, IFilterQuery } from '../domain/filter'
 import filterConfig from '../config/filters'
 import fetchApplicants from '../services/rest-api'
 
+interface AppContainerProps extends RouteComponentProps {}
+
 type AppContainerState = {
   untouchedCandidates: ICandidate[]
   candidates: ICandidate[]
@@ -26,9 +33,13 @@ type AppContainerState = {
   sort: IBaseSort
   isModalFilterOpen: boolean
   positionFilterInputs: IFilterInput[]
+  filters: IFilterQuery[]
 }
 
-class AppContainer extends React.Component<{}, AppContainerState> {
+class AppContainer extends React.Component<
+  AppContainerProps,
+  AppContainerState
+> {
   readonly state: AppContainerState = {
     untouchedCandidates: [],
     candidates: [],
@@ -40,6 +51,7 @@ class AppContainer extends React.Component<{}, AppContainerState> {
     },
     isModalFilterOpen: false,
     positionFilterInputs: [],
+    filters: [],
   }
 
   componentDidMount() {
@@ -48,17 +60,24 @@ class AppContainer extends React.Component<{}, AppContainerState> {
     }
   }
 
-  getCandidates = () =>
+  getCandidates = () => {
+    const ulrParam = qs.parse(this.props.location.search.replace('?', ''))
+    const param = this.validateUrlParams(ulrParam)
+      ? ulrParam
+      : { sort: this.state.sort, filter: this.state.filters }
+
     fetchApplicants()
       .then(res => {
         if (!res.data.error && this.state.untouchedCandidates.length === 0) {
           this.setState(state => ({
             ...state,
+            filters: param.filters,
+            sort: param.sort,
             untouchedCandidates: res.data.data,
             candidates: this.sortCandidates(
-              state.sort.activeColumn,
-              state.sort.direction,
-              res.data.data
+              param.sort.activeColumn,
+              param.sort.direction,
+              this.filterCandidates(param.filters, res.data.data)
             ),
             isLoading: false,
             isError: false,
@@ -80,7 +99,7 @@ class AppContainer extends React.Component<{}, AppContainerState> {
           }))
         }
       })
-
+  }
   // using arrow function here to avoid writing a constructor binding this method to the class.
   getFilterProps = (): IFilter => ({
     onCancel: this.handleOnCancelFilter,
@@ -97,11 +116,11 @@ class AppContainer extends React.Component<{}, AppContainerState> {
     // should be retrieving this value from the url params later
     filters: [
       {
-        column: 'status',
+        column: APPLICATION_STATUS,
         selectedValues: [],
       },
       {
-        column: 'position_applied',
+        column: POSITION_APPLIED,
         selectedValues: [],
       },
     ],
@@ -137,40 +156,62 @@ class AppContainer extends React.Component<{}, AppContainerState> {
 
   // handle on sortable column header click
   handleOnSort = (columnName: string, sortDirection: string) => {
+    const urlParam = qs.stringify({
+      filters: this.state.filters,
+      sort: {
+        direction: sortDirection,
+        activeColumn: columnName,
+      },
+    })
+
     if (columnName === this.state.sort.activeColumn) {
-      this.setState(state => ({
-        ...state,
-        candidates: this.sortCandidates(
-          columnName,
-          sortDirection,
-          state.candidates
-        ),
-        sort: { ...state.sort, direction: sortDirection },
-      }))
+      this.setState(
+        state => ({
+          ...state,
+          candidates: this.sortCandidates(
+            columnName,
+            sortDirection,
+            state.candidates
+          ),
+          sort: { ...state.sort, direction: sortDirection },
+        }),
+        () => this.props.history.push(`?${urlParam}`)
+      )
     } else {
-      this.setState(state => ({
-        ...state,
-        candidates: this.sortCandidates(
-          columnName,
-          ASCENDING,
-          state.candidates
-        ),
-        sort: { direction: ASCENDING, activeColumn: columnName },
-      }))
+      this.setState(
+        state => ({
+          ...state,
+          candidates: this.sortCandidates(
+            columnName,
+            ASCENDING,
+            state.candidates
+          ),
+          sort: { direction: ASCENDING, activeColumn: columnName },
+        }),
+        () => this.props.history.push(`?${urlParam}`)
+      )
     }
   }
 
-  handleApplyFilters = (filters: IFilterQuery[]) =>
+  handleApplyFilters = (filters: IFilterQuery[]) => {
+    const urlParam = qs.stringify({ filters, sort: this.state.sort })
+    this.props.history.push(`?${urlParam}`)
+
     this.setState(state => ({
       ...state,
+      filters,
       candidates: this.sortCandidates(
         state.sort.activeColumn,
         state.sort.direction,
         this.filterCandidates(filters)
       ),
     }))
+  }
 
-  filterCandidates = (filters: IFilterQuery[]): ICandidate[] =>
+  filterCandidates = (
+    filters: IFilterQuery[] = this.state.filters,
+    applicants: ICandidate[] = this.state.untouchedCandidates
+  ): ICandidate[] =>
     filters.reduce(
       (candidates: ICandidate[], query) =>
         query.selectedValues.length
@@ -178,7 +219,7 @@ class AppContainer extends React.Component<{}, AppContainerState> {
               query.selectedValues.includes(candidate[query.column])
             )
           : candidates,
-      this.state.untouchedCandidates
+      applicants
     )
 
   // Sort our list of applicants.
@@ -193,17 +234,17 @@ class AppContainer extends React.Component<{}, AppContainerState> {
         // Since Our date is ISO format we can use Date.Parse to convert in to unix time.
         return isAscendingSort
           ? candidates.sort(
-              (a, b) => Date.parse(a[columnName]) - Date.parse(b[columnName])
+              (a, b) => Date.parse(b[columnName]) - Date.parse(a[columnName])
             )
           : candidates.sort(
-              (a, b) => Date.parse(b[columnName]) - Date.parse(a[columnName])
+              (a, b) => Date.parse(a[columnName]) - Date.parse(b[columnName])
             )
       }
 
       case EXPERIENCE: {
         return isAscendingSort
-          ? candidates.sort((a, b) => a[columnName] - b[columnName])
-          : candidates.sort((a, b) => b[columnName] - a[columnName])
+          ? candidates.sort((a, b) => b[columnName] - a[columnName])
+          : candidates.sort((a, b) => a[columnName] - b[columnName])
       }
 
       case APPLICANT_NAME:
@@ -233,6 +274,28 @@ class AppContainer extends React.Component<{}, AppContainerState> {
       this.getCandidates
     )
 
+  // validate the url params.
+  validateUrlParams = ({
+    sort,
+    filters = [],
+  }: {
+    sort: IBaseSort
+    filters: IFilterQuery[]
+  }): boolean => {
+    const { direction, activeColumn } = sort
+
+    const isValidSort =
+      columns.includes(activeColumn) &&
+      (direction === ASCENDING || direction === DESCENDING)
+
+    const isValidFilters = filters.every(
+      filter =>
+        columns.includes(filter.column) && Array.isArray(filter.selectedValues)
+    )
+
+    return isValidFilters && isValidSort
+  }
+
   render() {
     if (this.state.isError) {
       return <Error retry={this.handleRetry} />
@@ -253,4 +316,4 @@ class AppContainer extends React.Component<{}, AppContainerState> {
   }
 }
 
-export default AppContainer
+export default withRouter(AppContainer)
