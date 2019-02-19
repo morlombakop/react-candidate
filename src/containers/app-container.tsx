@@ -285,7 +285,6 @@ class AppContainer extends React.Component<
     if (!sort || !filters) {
       return false
     }
-
     const { direction, activeColumn } = sort
 
     const isValidSort =
